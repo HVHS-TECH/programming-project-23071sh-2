@@ -1,0 +1,32 @@
+
+h1{
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 50px;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  gap: 20px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color:rgb(29, 13, 56);
+  color: #fff;
+  text-align: center;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
