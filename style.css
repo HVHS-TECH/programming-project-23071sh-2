@@ -1,13 +1,18 @@
 
+/* heading */ 
 h1{
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 50px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 100px;
   text-align: center;
 }
 
+
+/* Buttons on first page */ 
 .container {
   display: flex;
-  gap: 20px;
+  gap: 60px;
+  justify-content: center;  /* centers vertically */
+  align-items: center;      /* centers horizontally */
 }
 
 .column {
@@ -17,16 +22,41 @@ h1{
 }
 
 button {
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 20px 30px;
+  font-size: 20px;
   cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  background-color:rgb(29, 13, 56);
+  border:black;
+  border-radius: 20px;
+  background-color:rgb(43, 19, 85);
   color: #fff;
+  width: 220px;
   text-align: center;
 }
 
-button:hover {
-  background-color: #0056b3;
+/* Introduction page heading */ 
+h2{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 80px;
+  text-align: center;
 }
+
+ul {
+  list-style-position: inside;
+  text-align: center;
+}
+
+li {
+  font-size: 30px;
+  text-align: center;
+}
+
+.content{
+  display: flex;
+  gap: 60px;
+  justify-content:center;  /* centers vertically */
+  align-items:center;      /* centers horizontally */
+}
+
+
+
+
