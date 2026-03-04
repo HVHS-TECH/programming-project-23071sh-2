@@ -40,6 +40,7 @@ h2{
   text-align: center;
 }
 
+/* bullet points on the intro page */ 
 ul {
   list-style-position: inside;
   text-align: center;
@@ -56,6 +57,9 @@ li {
   justify-content:center;  /* centers vertically */
   align-items:center;      /* centers horizontally */
 }
+
+
+
 
 
 
