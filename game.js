@@ -3,10 +3,16 @@
 // PLay screen 
 /// Written by Sonia Hassan
 /*******************************************************/
-function preload() {
-imgBG   = loadImage('imgs/sky.jpeg');
+let ground, groundImage;
 
+function preload() {
+
+//Animation
+imgBG   = loadImage('imgs/sky.jpeg');
 astronout_start = loadAnimation('imgs/startposition.png');
+
+
+
 }
 
 function setup(){
@@ -27,7 +33,6 @@ object4 = new Sprite(1000, 800, 80, 90, 'k')
 
 //Ground 
 ground = new Sprite(200, 810, 3440, 20,);
-ground.color = 'white';
 }
 
 
