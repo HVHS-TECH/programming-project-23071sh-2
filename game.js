@@ -10,8 +10,9 @@ function preload() {
 //Animation
 imgBG   = loadImage('imgs/sky.jpeg');
 astronout_start = loadAnimation('imgs/startposition.png');
-
-
+obstacle1 = loadImage("imgs/earth.png");
+obstacle2 = loadImage("imgs/neptune.png");
+obstacle2 = loadImage("imgs/planet.png");
 
 }
 
@@ -20,24 +21,29 @@ console.log("setup:");
 createCanvas(windowWidth, windowHeight);
 
 //Astronout 
-astronout = new Sprite(50, 800, 20, 50, 'k');
+astronout = new Sprite(50, 850, 20, 50, 'k');
 astronout.addAnimation("start position", astronout_start );
 astronout.scale = 0.2;
 
-//Obstacles
-obstaclesGroup = new Group();
-object1 = new Sprite(400, 800, 80, 90, 'k')
-object2 = new Sprite(600, 800, 80, 90, 'k')
-object3 = new Sprite(800, 800, 80, 90, 'k')
-object4 = new Sprite(1000, 800, 80, 90, 'k')
+//ground
+ground = createSprite(width/2, height-20, width*2, 40);
+ground.color = '#0d0429'
+ground.vel.x = -5; // moves ground left
 
-//Ground 
-ground = new Sprite(200, 810, 3440, 20,);
+obstaclesGroup = new Group();
+
+score = 0;
 }
 
 
-
-
 function draw(){ 
-    background(imgBG);
+background(imgBG);
+text("Score: "+ score, 500,50);
+
+
+// reset ground so it loops
+if (ground.x < width/2){
+ground.x = width/2;
+}
+
 }
