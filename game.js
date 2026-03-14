@@ -3,22 +3,16 @@
 // PLay screen 
 /// Written by Sonia Hassan
 /*******************************************************/
-function preload() {
-  imgBG   = loadImage('imgs/sky.jpeg');
-}
 
 function setup(){
 console.log("setup:");
 createCanvas(windowWidth, windowHeight);
 
-
-//Astronout 
-box = new Sprite(200, 300, 50, 100, '20');
-box.color = 'white';
-
+Astronout = createSprite(50,180,20,50);
+  
 }
 
 
 function draw(){ 
-    background(imgBG);
+    background(blue);
 }
