@@ -30,7 +30,7 @@ astronout = new Sprite(50, 850, 20, 50, 'k');
 astronout.addAnimation("start position", astronout_start );
 astronout.scale = 0.2;
 
-//ground
+
 ground = createSprite(width/2, height-20, width*2, 40);
 ground.addImage("ground",groundImage);
 ground.x = ground.width /2;
