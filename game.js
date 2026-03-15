@@ -3,30 +3,28 @@
 // PLay screen 
 /// Written by Sonia Hassan
 /*******************************************************/
-<<<<<<< HEAD
-=======
-let ground, groundImage;
+let PLAY = 1;
+let END = 0;
+let gameState = PLAY;
+
+let ground, invisibleGround, groundImage;
 
 function preload() {
 
 //Animation
-imgBG   = loadImage('imgs/sky.jpeg');
+imgBG   = loadImage('imgs/background.jpg');
+groundImage = loadAnimation('imgs/ground2.png');
 astronout_start = loadAnimation('imgs/startposition.png');
-obstacle1 = loadImage("imgs/earth.png");
-obstacle2 = loadImage("imgs/neptune.png");
-obstacle2 = loadImage("imgs/planet.png");
+obstacle1 = loadAnimation('imgs/neptune.png');
+obstacle2 = loadAnimation('imgs/earth.png');
+obstacle3 = loadAnimation('imgs/planet.png');
 
+  
 }
->>>>>>> 703dc0e9b7ddd4d602d780f65afede54760e96a3
-
 function setup(){
 console.log("setup:");
 createCanvas(windowWidth, windowHeight);
 
-<<<<<<< HEAD
-Astronout = createSprite(50,180,20,50);
-  
-=======
 //Astronout 
 astronout = new Sprite(50, 850, 20, 50, 'k');
 astronout.addAnimation("start position", astronout_start );
@@ -34,29 +32,19 @@ astronout.scale = 0.2;
 
 //ground
 ground = createSprite(width/2, height-20, width*2, 40);
-ground.color = '#0d0429'
-ground.vel.x = -5; // moves ground left
+ground.addImage("ground",groundImage);
+ground.x = ground.width /2;
+ground.velocityX = -(6 + 3*score/100);
+
+//invisable ground 
+invisibleGround = createSprite(width/2, height-20, width*2, 40);
+invisibleGround.visible = false;
 
 obstaclesGroup = new Group();
-
-score = 0;
->>>>>>> 703dc0e9b7ddd4d602d780f65afede54760e96a3
+obstacle.scale = 0.2
 }
 
 
 function draw(){ 
-<<<<<<< HEAD
-    background(blue);
+    background(imgBG);
 }
-=======
-background(imgBG);
-text("Score: "+ score, 500,50);
-
-
-// reset ground so it loops
-if (ground.x < width/2){
-ground.x = width/2;
-}
-
-}
->>>>>>> 703dc0e9b7ddd4d602d780f65afede54760e96a3
