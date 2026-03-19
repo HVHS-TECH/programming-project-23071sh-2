@@ -3,15 +3,18 @@
 // PLay screen 
 /// Written by Sonia Hassan
 /*******************************************************/
-// GAME STATES
 let MENU = "menu";
 let INSTRUCTIONS = "instructions";
 let PLAY = "play";
 let END = "end";
 let gameState = MENU;
+
 let ground, groundImage;
+let invisibleGround;
 let astronaut, astronaut_start;
+let obstacle1Sprite, obstacle2Sprite, obstacle3Sprite;
 let obstacle1, obstacle2, obstacle3;
+let imgBG;
 
 function preload() {
     imgBG = loadImage('imgs/sky.jpeg');
@@ -23,56 +26,56 @@ function preload() {
 }
 
 function setup() {
-    console.log("setup:");
-
     createCanvas(windowWidth, windowHeight);
 
-    // Astronaut 
-    astronaut = new Sprite(100, height - 80, 50, 50);
+    // Astronaut
+    astronaut = new Sprite(100, height - 60, 50, 50);
     astronaut.addAnimation("start", astronaut_start);
     astronaut.scale = 0.3;
 
+    // Create two ground sprites for looping
+    ground1 = new Sprite(width / 2, height - 20, 0, 0);
+    ground1.addAnimation("ground", groundImage);
+    ground1.scale = 1;
 
-    ground = new Sprite(width / 2, height - 20);
-    ground.addAnimation(groundImage);
-    ground.scale = 2;
-    ground.velocity.x = -6;
-
-    // Invisible ground (so astronaut doesn't fall)
-    invisibleGround = new Sprite(width / 2, height - 20, width * 2, 40);
+    ground2 = new Sprite(width / 2 + groundImage.width, height - 20, 0, 0);
+    ground2.addAnimation("ground", groundImage);
+    ground2.scale = 1;
+    // Invisible ground for collision
+    invisibleGround = new Sprite(width / 2, height - 20, width * 2, 20);
     invisibleGround.visible = false;
 
     // Obstacles
-    obstacle1Sprite = new Sprite(width + 100, height - 80, 50, 50, 'k');
+    obstacle1Sprite = new Sprite(width + 50, height - 60, 50, 50);
     obstacle1Sprite.addAnimation("neptune", obstacle1);
-    obstacle1Sprite.scale = 0.2
-    obstacle1Sprite.velocity.x = -6;
+    obstacle1Sprite.scale = 0.2;
 
-    obstacle2Sprite = new Sprite(width + 400, height - 80, 50, 50);
+    obstacle2Sprite = new Sprite(width + 200, height - 60, 50, 50);
     obstacle2Sprite.addAnimation("earth", obstacle2);
     obstacle2Sprite.scale = 0.2;
-    obstacle2Sprite.velocity.x = -6;
 
-    obstacle3Sprite = new Sprite(width + 700, height - 80, 50, 50);
+    obstacle3Sprite = new Sprite(width + 350, height - 60, 50, 50);
     obstacle3Sprite.addAnimation("planet", obstacle3);
     obstacle3Sprite.scale = 0.22;
-    obstacle3Sprite.velocity.x = -6;
 }
 
 function draw() {
     background(imgBG);
 
     if (gameState === MENU) {
+        hideSprites();
         drawMenu();
     }
     else if (gameState === INSTRUCTIONS) {
+        hideSprites();
         drawInstructions();
     }
-
-    if (gameState === PLAY) {
+    else if (gameState === PLAY) {
+        showSprites();
         drawGame();
     }
     else if (gameState === END) {
+        showSprites();
         drawGameOver();
     }
 }
@@ -100,46 +103,65 @@ function drawInstructions() {
 }
 
 function drawGame() {
-
-    // Ground scrolling
-    if (ground.position.x < width / 6 - ground.width / 6) {
-        ground.position.x = width / 3;
-    }
-    // Collision with ground
-    astronaut.collide(invisibleGround);
-    // Jump
-    if (keyWentDown("space")) {
-        astronaut.velocity.y = -12;
-    }
     // Gravity
-    astronaut.velocity.y += 0.6;
-    // Collision with planets
+    astronaut.velocity.y += 0.8;
+
+    // Make astronaut stand on invisible ground
+    astronaut.collide(invisibleGround);
+
+    // Loop obstacles
+    loopObstacles();
+
+    // Scroll ground
+    let groundSpeed = -6;
+    ground1.position.x += groundSpeed;
+    ground2.position.x += groundSpeed;
+
+    // Reset ground when off-screen
+    if (ground1.position.x < -width / 2) {
+        ground1.position.x = ground2.position.x + width;
+    }
+    if (ground2.position.x < -width / 2) {
+        ground2.position.x = ground1.position.x + width;
+    }
+
+    // Collision check with obstacles
     if (
-        astronaut.collides(obstacle1Sprite) ||
-        astronaut.collides(obstacle2Sprite) ||
-        astronaut.collides(obstacle3Sprite)
+        astronaut.overlap(obstacle1Sprite) ||
+        astronaut.overlap(obstacle2Sprite) ||
+        astronaut.overlap(obstacle3Sprite)
     ) {
         gameState = END;
     }
-    drawSprites();
 
+
+    drawSprites();
 }
 
-function drawGameOver() {
-    textAlign(CENTER);
-    fill("white");
-    textSize(60);
-    text("GAME OVER", width / 2, height / 2 - 40);
-    textSize(25);
-    text("Press R to Restart", width / 2, height / 2 + 40);
-    drawSprites();
-
-}
-
+// Jump when SPACE pressed
 function keyPressed() {
+    if (gameState === PLAY && key === ' ') {
+        // Allow jump if astronaut is close enough to ground
+        if (astronaut.position.y >= invisibleGround.position.y - 40) {
+            astronaut.velocity.y = -15; // jump force
+        }
+    }
 
-    if (gameState === MENU && keyCode === ENTER) {
+
+    function drawGameOver() {
+        textAlign(CENTER);
+        fill("white");
+        textSize(60);
+        text("GAME OVER", width / 2, height / 2 - 40);
+        textSize(25);
+        text("Press R to Restart", width / 2, height / 2 + 40);
+        drawSprites();
+    }
+
+    // Start game
+    if (gameState === MENU && (keyCode === ENTER || key === "Enter")) {
         gameState = PLAY;
+        startGame();
     }
 
     if (gameState === MENU && key === "i") {
@@ -151,11 +173,62 @@ function keyPressed() {
     }
 
     if (gameState === END && key === "r") {
+        resetGame();
         gameState = MENU;
     }
 }
 
+function startGame() {
+    // Obstacles move left
+    obstacle1Sprite.velocity.x = -6;
+    obstacle2Sprite.velocity.x = -6;
+    obstacle3Sprite.velocity.x = -6;
+}
 
+function resetGame() {
+    astronaut.position.x = 100;
+    astronaut.position.y = height - 100;
+    astronaut.velocity.y = 0;
 
+    obstacle1Sprite.position.x = width + 50;
+    obstacle2Sprite.position.x = width + 200;
+    obstacle3Sprite.position.x = width + 350;
+}
 
+// Show/hide sprites
+function hideSprites() {
+    astronaut.visible = false;
+    ground1.visible = false;
+    ground2.visible = false;
+    obstacle1Sprite.visible = false;
+    obstacle2Sprite.visible = false;
+    obstacle3Sprite.visible = false;
+}
 
+function showSprites() {
+    astronaut.visible = true;
+    ground1.visible = true;
+    ground2.visible = true;
+    obstacle1Sprite.visible = true;
+    obstacle2Sprite.visible = true;
+    obstacle3Sprite.visible = true;
+}
+
+// Loop obstacles quickly
+function loopObstacles() {
+    let obstacleSpeed = -6;
+
+    if (obstacle1Sprite.position.x < -50) {
+        obstacle1Sprite.position.x = width + 50;
+    }
+    if (obstacle2Sprite.position.x < -50) {
+        obstacle2Sprite.position.x = obstacle1Sprite.position.x + 150;
+    }
+    if (obstacle3Sprite.position.x < -50) {
+        obstacle3Sprite.position.x = obstacle2Sprite.position.x + 150;
+    }
+
+    obstacle1Sprite.velocity.x = obstacleSpeed;
+    obstacle2Sprite.velocity.x = obstacleSpeed;
+    obstacle3Sprite.velocity.x = obstacleSpeed;
+}
