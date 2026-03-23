@@ -9,7 +9,7 @@ let PLAY = "play";
 let END = "end";
 let gameState = MENU;
 
-let ground, groundImage;
+let ground1, ground2, groundImage 
 let invisibleGround;
 let astronaut, astronaut_start;
 let obstacle1Sprite, obstacle2Sprite, obstacle3Sprite;
@@ -41,6 +41,7 @@ function setup() {
     ground2 = new Sprite(width / 2 + groundImage.width, height - 20, 0, 0);
     ground2.addAnimation("ground", groundImage);
     ground2.scale = 1;
+
     // Invisible ground for collision
     invisibleGround = new Sprite(width / 2, height - 20, width * 2, 20);
     invisibleGround.visible = false;
@@ -106,7 +107,7 @@ function drawGame() {
     // Gravity
     astronaut.velocity.y += 0.8;
 
-    // Makes astronaut stand on invisible ground
+    // Make astronaut stand on invisible ground
     astronaut.collide(invisibleGround);
 
     // Loop obstacles
@@ -138,7 +139,26 @@ function drawGame() {
     drawSprites();
 }
 
+function keyPressed() {
+    if (gameState === MENU && key === "Enter") {
+        gameState = PLAY;
+        startGame();
+    }
 
+    if (gameState === MENU && key === "i") {
+        gameState = INSTRUCTIONS;
+    }
+
+    if (gameState === INSTRUCTIONS && key === "b") {
+        gameState = MENU;
+    }
+
+    if (gameState === END && key === "r") {
+        resetGame();
+        gameState = MENU;
+    }
+    }
+    
     function drawGameOver() {
         textAlign(CENTER);
         fill("white");
@@ -147,10 +167,9 @@ function drawGame() {
         textSize(25);
         text("Press R to Restart", width / 2, height / 2 + 40);
         drawSprites();
-        
     }
 
-   
+
 function startGame() {
     // Obstacles move left
     obstacle1Sprite.velocity.x = -6;
