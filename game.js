@@ -106,7 +106,7 @@ function drawGame() {
     // Gravity
     astronaut.velocity.y += 0.8;
 
-    // Make astronaut stand on invisible ground
+    // Makes astronaut stand on invisible ground
     astronaut.collide(invisibleGround);
 
     // Loop obstacles
@@ -138,15 +138,6 @@ function drawGame() {
     drawSprites();
 }
 
-// Jump when SPACE pressed
-function keyPressed() {
-    if (gameState === PLAY && key === ' ') {
-        // Allow jump if astronaut is close enough to ground
-        if (astronaut.position.y >= invisibleGround.position.y - 40) {
-            astronaut.velocity.y = -15; // jump force
-        }
-    }
-
 
     function drawGameOver() {
         textAlign(CENTER);
@@ -156,28 +147,10 @@ function keyPressed() {
         textSize(25);
         text("Press R to Restart", width / 2, height / 2 + 40);
         drawSprites();
+        
     }
 
-    // Start game
-    if (gameState === MENU && (keyCode === ENTER || key === "Enter")) {
-        gameState = PLAY;
-        startGame();
-    }
-
-    if (gameState === MENU && key === "i") {
-        gameState = INSTRUCTIONS;
-    }
-
-    if (gameState === INSTRUCTIONS && key === "b") {
-        gameState = MENU;
-    }
-
-    if (gameState === END && key === "r") {
-        resetGame();
-        gameState = MENU;
-    }
-}
-
+   
 function startGame() {
     // Obstacles move left
     obstacle1Sprite.velocity.x = -6;
