@@ -9,7 +9,7 @@ let PLAY = "play";
 let END = "end";
 let gameState = MENU;
 
-let ground1, ground2, groundImage 
+let ground1, ground2, groundImage
 let invisibleGround;
 let astronaut, astronaut_start;
 let obstacle1Sprite, obstacle2Sprite, obstacle3Sprite;
@@ -34,13 +34,11 @@ function setup() {
     astronaut.scale = 0.3;
 
     // Create two ground sprites for looping
-    ground1 = new Sprite(width / 2, height - 20, 0, 0);
+    ground1 = new Sprite(width / 2, height - 20, width, 40);
     ground1.addAnimation("ground", groundImage);
-    ground1.scale = 1;
 
-    ground2 = new Sprite(width / 2 + groundImage.width, height - 20, 0, 0);
+    ground2 = new Sprite(width + width / 2, height - 20, width, 40);
     ground2.addAnimation("ground", groundImage);
-    ground2.scale = 1;
 
     // Invisible ground for collision
     invisibleGround = new Sprite(width / 2, height - 20, width * 2, 20);
@@ -135,12 +133,10 @@ function drawGame() {
         gameState = END;
     }
 
-
-    drawSprites();
 }
 
 function keyPressed() {
-    if (gameState === MENU && key === "Enter") {
+    if (gameState === MENU && keyCode === ENTER) {
         gameState = PLAY;
         startGame();
     }
@@ -157,17 +153,17 @@ function keyPressed() {
         resetGame();
         gameState = MENU;
     }
-    }
-    
-    function drawGameOver() {
-        textAlign(CENTER);
-        fill("white");
-        textSize(60);
-        text("GAME OVER", width / 2, height / 2 - 40);
-        textSize(25);
-        text("Press R to Restart", width / 2, height / 2 + 40);
-        drawSprites();
-    }
+}
+
+function drawGameOver() {
+    textAlign(CENTER);
+    fill("white");
+    textSize(60);
+    text("GAME OVER", width / 2, height / 2 - 40);
+    textSize(25);
+    text("Press R to Restart", width / 2, height / 2 + 40);
+
+}
 
 
 function startGame() {
@@ -219,7 +215,6 @@ function loopObstacles() {
     if (obstacle3Sprite.position.x < -50) {
         obstacle3Sprite.position.x = obstacle2Sprite.position.x + 150;
     }
-
     obstacle1Sprite.velocity.x = obstacleSpeed;
     obstacle2Sprite.velocity.x = obstacleSpeed;
     obstacle3Sprite.velocity.x = obstacleSpeed;
