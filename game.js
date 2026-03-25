@@ -1,7 +1,7 @@
 /*******************************************************/
 // P5.play: Space runner game 
-// PLay screen 
-/// Written by Sonia Hassan
+// Play screen 
+// Written by Sonia Hassan
 /*******************************************************/
 let MENU = "menu";
 let INSTRUCTIONS = "instructions";
@@ -9,16 +9,15 @@ let PLAY = "play";
 let END = "end";
 let gameState = MENU;
 
-let ground1, ground2, groundImage
-let invisibleGround;
+let ground1, groundImage;
 let astronaut, astronaut_start;
-let obstacle1Sprite, obstacle2Sprite, obstacle3Sprite;
+let obstacles = [];
 let obstacle1, obstacle2, obstacle3;
 let imgBG;
 
 function preload() {
     imgBG = loadImage('imgs/sky.jpeg');
-    groundImage = loadAnimation('imgs/ground.png');
+    groundImage = loadAnimation('imgs/ground.png'); 
     astronaut_start = loadAnimation('imgs/startposition.png');
     obstacle1 = loadAnimation('imgs/neptune.png');
     obstacle2 = loadAnimation('imgs/earth.png');
@@ -29,33 +28,27 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
 
     // Astronaut
-    astronaut = new Sprite(100, height - 60, 50, 50);
+    astronaut = new Sprite(150, height - 120, 50, 50);
     astronaut.addAnimation("start", astronaut_start);
     astronaut.scale = 0.3;
 
-    // Create two ground sprites for looping
-    ground1 = new Sprite(width / 2, height - 20, width, 40);
+    // Ground
+    ground1 = new Sprite(width / 2, height - 50, width, 50);
     ground1.addAnimation("ground", groundImage);
-
-    ground2 = new Sprite(width + width / 2, height - 20, width, 40);
-    ground2.addAnimation("ground", groundImage);
-
-    // Invisible ground for collision
-    invisibleGround = new Sprite(width / 2, height - 20, width * 2, 20);
-    invisibleGround.visible = false;
+    ground1.immovable = true;
+    ground1.velocity.x = -6;
 
     // Obstacles
-    obstacle1Sprite = new Sprite(width + 50, height - 60, 50, 50);
-    obstacle1Sprite.addAnimation("neptune", obstacle1);
-    obstacle1Sprite.scale = 0.2;
+    let obstacleImages = [obstacle1, obstacle2, obstacle3];
+    let startX = [50, 300, 600];
 
-    obstacle2Sprite = new Sprite(width + 200, height - 60, 50, 50);
-    obstacle2Sprite.addAnimation("earth", obstacle2);
-    obstacle2Sprite.scale = 0.2;
-
-    obstacle3Sprite = new Sprite(width + 350, height - 60, 50, 50);
-    obstacle3Sprite.addAnimation("planet", obstacle3);
-    obstacle3Sprite.scale = 0.22;
+    for (let i = 0; i < 3; i++) {
+        let obs = new Sprite(width + startX[i], height - 120, 50, 50);
+        obs.addAnimation("planet" + i, obstacleImages[i]);
+        obs.scale = 0.2 + i * 0.02;
+        obs.velocity.x = -6;
+        obstacles.push(obs);
+    }
 }
 
 function draw() {
@@ -64,21 +57,19 @@ function draw() {
     if (gameState === MENU) {
         hideSprites();
         drawMenu();
-    }
-    else if (gameState === INSTRUCTIONS) {
+    } else if (gameState === INSTRUCTIONS) {
         hideSprites();
         drawInstructions();
-    }
-    else if (gameState === PLAY) {
+    } else if (gameState === PLAY) {
         showSprites();
         drawGame();
-    }
-    else if (gameState === END) {
+    } else if (gameState === END) {
         showSprites();
         drawGameOver();
     }
 }
 
+// MENU
 function drawMenu() {
     textAlign(CENTER);
     fill("white");
@@ -89,6 +80,7 @@ function drawMenu() {
     text("Press I for Instructions", width / 2, height / 2 + 40);
 }
 
+// INSTRUCTIONS
 function drawInstructions() {
     textAlign(CENTER);
     fill("white");
@@ -101,44 +93,41 @@ function drawInstructions() {
     text("Press B to go back", width / 2, 400);
 }
 
+// GAME
 function drawGame() {
     // Gravity
     astronaut.velocity.y += 0.8;
 
-    // Make astronaut stand on invisible ground
-    astronaut.collide(invisibleGround);
+    // Stay on ground
+    if (astronaut.position.y > height - 120) {
+        astronaut.position.y = height - 120;
+        astronaut.velocity.y = 0;
+    }
 
-    // Loop obstacles
-    loopObstacles();
+    // Obstacles
+    for (let i = 0; i < obstacles.length; i++) {
+        if (obstacles[i].position.x < -50) {
+            obstacles[i].position.x = width + random(100, 400);
+        }
 
-    // Scroll ground
-    let groundSpeed = -6;
-    ground1.position.x += groundSpeed;
-    ground2.position.x += groundSpeed;
+        // Collision
+        if (astronaut.overlap(obstacles[i])) {
+            gameState = END;
+        }
+    }
 
-    // Reset ground when off-screen
+    // Ground looping
     if (ground1.position.x < -width / 2) {
-        ground1.position.x = ground2.position.x + width;
-    }
-    if (ground2.position.x < -width / 2) {
-        ground2.position.x = ground1.position.x + width;
+        ground1.position.x = width / 2;
     }
 
-    // Collision check with obstacles
-    if (
-        astronaut.overlap(obstacle1Sprite) ||
-        astronaut.overlap(obstacle2Sprite) ||
-        astronaut.overlap(obstacle3Sprite)
-    ) {
-        gameState = END;
-    }
 
 }
 
+// KEY PRESS
 function keyPressed() {
     if (gameState === MENU && keyCode === ENTER) {
         gameState = PLAY;
-        startGame();
     }
 
     if (gameState === MENU && key === "i") {
@@ -153,8 +142,16 @@ function keyPressed() {
         resetGame();
         gameState = MENU;
     }
+
+    // Jump
+    if (gameState === PLAY && key === ' ') {
+        if (astronaut.position.y >= height - 120) {
+            astronaut.velocity.y = -15;
+        }
+    }
 }
 
+// GAME OVER
 function drawGameOver() {
     textAlign(CENTER);
     fill("white");
@@ -162,60 +159,35 @@ function drawGameOver() {
     text("GAME OVER", width / 2, height / 2 - 40);
     textSize(25);
     text("Press R to Restart", width / 2, height / 2 + 40);
-
 }
 
-
-function startGame() {
-    // Obstacles move left
-    obstacle1Sprite.velocity.x = -6;
-    obstacle2Sprite.velocity.x = -6;
-    obstacle3Sprite.velocity.x = -6;
-}
-
+// RESET GAME
 function resetGame() {
-    astronaut.position.x = 100;
-    astronaut.position.y = height - 100;
+    astronaut.position.x = 150;
+    astronaut.position.y = height - 120;
     astronaut.velocity.y = 0;
 
-    obstacle1Sprite.position.x = width + 50;
-    obstacle2Sprite.position.x = width + 200;
-    obstacle3Sprite.position.x = width + 350;
+    let startX = [50, 300, 600];
+    for (let i = 0; i < obstacles.length; i++) {
+        obstacles[i].position.x = width + startX[i];
+    }
+
+    ground1.position.x = width / 2;
 }
 
-// Show/hide sprites
+// SHOW / HIDE
 function hideSprites() {
     astronaut.visible = false;
     ground1.visible = false;
-    ground2.visible = false;
-    obstacle1Sprite.visible = false;
-    obstacle2Sprite.visible = false;
-    obstacle3Sprite.visible = false;
+    for (let i = 0; i < obstacles.length; i++) {
+        obstacles[i].visible = false;
+    }
 }
 
 function showSprites() {
     astronaut.visible = true;
     ground1.visible = true;
-    ground2.visible = true;
-    obstacle1Sprite.visible = true;
-    obstacle2Sprite.visible = true;
-    obstacle3Sprite.visible = true;
-}
-
-// Loop obstacles quickly
-function loopObstacles() {
-    let obstacleSpeed = -6;
-
-    if (obstacle1Sprite.position.x < -50) {
-        obstacle1Sprite.position.x = width + 50;
+    for (let i = 0; i < obstacles.length; i++) {
+        obstacles[i].visible = true;
     }
-    if (obstacle2Sprite.position.x < -50) {
-        obstacle2Sprite.position.x = obstacle1Sprite.position.x + 150;
-    }
-    if (obstacle3Sprite.position.x < -50) {
-        obstacle3Sprite.position.x = obstacle2Sprite.position.x + 150;
-    }
-    obstacle1Sprite.velocity.x = obstacleSpeed;
-    obstacle2Sprite.velocity.x = obstacleSpeed;
-    obstacle3Sprite.velocity.x = obstacleSpeed;
 }
