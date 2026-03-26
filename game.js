@@ -14,6 +14,7 @@ let astronaut, astronaut_start;
 let obstacles = [];
 let obstacle1, obstacle2, obstacle3;
 let imgBG;
+let score = 0;
 
 function preload() {
     imgBG = loadImage('imgs/sky.jpeg');
@@ -28,9 +29,9 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
 
     // Astronaut
-    astronaut = new Sprite(150, height - 120, 50, 50);
+    astronaut = new Sprite(120, height - 75, 50, 50);
     astronaut.addAnimation("start", astronaut_start);
-    astronaut.scale = 0.3;
+    astronaut.scale = 0.35;
 
     // Ground
     ground1 = new Sprite(width / 2, height - 50, width, 50);
@@ -42,6 +43,7 @@ function setup() {
     ground2.addAnimation("ground", groundImage);
     ground2.velocity.x = -6;
     ground2.immovable = true;
+
     // Obstacles
     let obstacleImages = [obstacle1, obstacle2, obstacle3];
     let startX = [10, 500, 1000];
@@ -49,7 +51,7 @@ function setup() {
     for (let i = 0; i < 3; i++) {
         let obs = new Sprite(width + startX[i], height - 120, 50, 50);
         obs.addAnimation("planet" + i, obstacleImages[i]);
-        obs.scale = 0.2 + i * 0.02;
+        obs.scale = 0.175 + i * 0.017;
         obs.velocity.x = -6;
         obstacles.push(obs);
     }
@@ -95,18 +97,27 @@ function drawInstructions() {
     text("Avoid the planets!", width / 2, 280);
     text("Survive as long as possible", width / 2, 310);
     text("Press B to go back", width / 2, 400);
+    text("TIP! press space double or triple times to make the astronout go higher", width / 2, 500);
 }
 
 // GAME
 function drawGame() {
     // Gravity
-    astronaut.velocity.y += 0.8;
-    
+    astronaut.velocity.y += 0.9;
+
     if (astronaut.position.y > height - 120) {
-    astronaut.position.y = height - 120;
-    astronaut.velocity.y = 0;
-}
-// Obstacles
+        astronaut.position.y = height - 120;
+        astronaut.velocity.y = 0;
+    }
+
+    // Update score
+    score += 1; // increases by 1 every frame
+    fill("white");
+    textSize(30);
+    textAlign(LEFT);
+    text("Score: " + score, 20, 40);
+
+    // Obstacles
     for (let i = 0; i < obstacles.length; i++) {
         if (obstacles[i].position.x < -50) {
             obstacles[i].position.x = width + random(300, 600);
@@ -119,14 +130,14 @@ function drawGame() {
     }
 
 
-//infinite loop
-if (ground1.position.x <= -width / 2) {
-    ground1.position.x = ground2.position.x + width;
-}
+    //infinite loop
+    if (ground1.position.x <= -width / 2) {
+        ground1.position.x = ground2.position.x + width;
+    }
 
-if (ground2.position.x <= -width / 2) {
-    ground2.position.x = ground1.position.x + width;
-}
+    if (ground2.position.x <= -width / 2) {
+        ground2.position.x = ground1.position.x + width;
+    }
 
 }
 
@@ -151,8 +162,8 @@ function keyPressed() {
 
     // Jump
     if (gameState === PLAY && key === ' ') {
-        if (astronaut.position.y >= height - 120) {
-            astronaut.velocity.y = -15;
+        if (astronaut.position.y >= height - 500) {
+            astronaut.velocity.y = -20;
         }
     }
 }
@@ -169,16 +180,30 @@ function drawGameOver() {
 
 // RESET GAME
 function resetGame() {
-    astronaut.position.x = 150;
-    astronaut.position.y = height - 120;
+    // Reset astronaut
+    astronaut.position.x = 120;
+    astronaut.position.y = height - 100;
     astronaut.velocity.y = 0;
 
-    let startX = [50, 300, 600];
+    // Reset ground
+    ground1.position.x = width / 2;
+    ground1.position.y = height - 50;
+    ground1.velocity.x = -6;
+
+    ground2.position.x = width + width / 2;
+    ground2.position.y = height - 50;
+    ground2.velocity.x = -6;
+
+    // Reset obstacles to same start positions as in setup
+    let startX = [10, 500, 1000];
     for (let i = 0; i < obstacles.length; i++) {
         obstacles[i].position.x = width + startX[i];
+        obstacles[i].position.y = height - 120;
+        obstacles[i].velocity.x = -6;
     }
 
-    ground1.position.x = width / 2;
+    // RESET SCORE
+    score = 0;
 }
 
 // SHOW / HIDE
