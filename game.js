@@ -9,7 +9,7 @@ let PLAY = "play";
 let END = "end";
 let gameState = MENU;
 
-let ground1, groundImage;
+let ground1, ground2, groundImage;
 let astronaut, astronaut_start;
 let obstacles = [];
 let obstacle1, obstacle2, obstacle3;
@@ -17,7 +17,7 @@ let imgBG;
 
 function preload() {
     imgBG = loadImage('imgs/sky.jpeg');
-    groundImage = loadAnimation('imgs/ground.png'); 
+    groundImage = loadAnimation('imgs/ground.png');
     astronaut_start = loadAnimation('imgs/startposition.png');
     obstacle1 = loadAnimation('imgs/neptune.png');
     obstacle2 = loadAnimation('imgs/earth.png');
@@ -35,9 +35,13 @@ function setup() {
     // Ground
     ground1 = new Sprite(width / 2, height - 50, width, 50);
     ground1.addAnimation("ground", groundImage);
-    ground1.immovable = true;
     ground1.velocity.x = -6;
+    ground1.immovable = true;
 
+    ground2 = new Sprite(width + width / 2, height - 50, width, 50);
+    ground2.addAnimation("ground", groundImage);
+    ground2.velocity.x = -6;
+    ground2.immovable = true;
     // Obstacles
     let obstacleImages = [obstacle1, obstacle2, obstacle3];
     let startX = [50, 300, 600];
@@ -97,14 +101,12 @@ function drawInstructions() {
 function drawGame() {
     // Gravity
     astronaut.velocity.y += 0.8;
-
-    // Stay on ground
+    
     if (astronaut.position.y > height - 120) {
-        astronaut.position.y = height - 120;
-        astronaut.velocity.y = 0;
-    }
-
-    // Obstacles
+    astronaut.position.y = height - 120;
+    astronaut.velocity.y = 0;
+}
+// Obstacles
     for (let i = 0; i < obstacles.length; i++) {
         if (obstacles[i].position.x < -50) {
             obstacles[i].position.x = width + random(100, 400);
@@ -116,11 +118,15 @@ function drawGame() {
         }
     }
 
-    // Ground looping
-    if (ground1.position.x < -width / 2) {
-        ground1.position.x = width / 2;
-    }
 
+// Perfect infinite loop
+if (ground1.position.x <= -width / 2) {
+    ground1.position.x = ground2.position.x + width;
+}
+
+if (ground2.position.x <= -width / 2) {
+    ground2.position.x = ground1.position.x + width;
+}
 
 }
 
@@ -179,6 +185,7 @@ function resetGame() {
 function hideSprites() {
     astronaut.visible = false;
     ground1.visible = false;
+    ground2.visible = false;
     for (let i = 0; i < obstacles.length; i++) {
         obstacles[i].visible = false;
     }
@@ -187,6 +194,7 @@ function hideSprites() {
 function showSprites() {
     astronaut.visible = true;
     ground1.visible = true;
+    ground2.visible = true;
     for (let i = 0; i < obstacles.length; i++) {
         obstacles[i].visible = true;
     }
