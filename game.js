@@ -44,7 +44,7 @@ function setup() {
     ground2.immovable = true;
     // Obstacles
     let obstacleImages = [obstacle1, obstacle2, obstacle3];
-    let startX = [50, 300, 600];
+    let startX = [10, 500, 1000];
 
     for (let i = 0; i < 3; i++) {
         let obs = new Sprite(width + startX[i], height - 120, 50, 50);
@@ -109,7 +109,7 @@ function drawGame() {
 // Obstacles
     for (let i = 0; i < obstacles.length; i++) {
         if (obstacles[i].position.x < -50) {
-            obstacles[i].position.x = width + random(100, 400);
+            obstacles[i].position.x = width + random(300, 600);
         }
 
         // Collision
@@ -119,7 +119,7 @@ function drawGame() {
     }
 
 
-// Perfect infinite loop
+//infinite loop
 if (ground1.position.x <= -width / 2) {
     ground1.position.x = ground2.position.x + width;
 }
