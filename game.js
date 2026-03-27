@@ -70,7 +70,7 @@ function draw() {
         showSprites();
         drawGame();
     } else if (gameState === END) {
-        showSprites();
+        hideSprites();
         drawGameOver();
     }
 }
@@ -96,8 +96,8 @@ function drawInstructions() {
     text("Press SPACE to Jump", width / 2, 250);
     text("Avoid the planets!", width / 2, 280);
     text("Survive as long as possible", width / 2, 310);
-    text("Press B to go back", width / 2, 400);
-    text("TIP! press space double or triple times to make the astronout go higher", width / 2, 500);
+    text("TIP! press space double or triple times to make the astronout go higher", width / 2, 340);
+    text("Press B to go back,", width / 2, 400);
 }
 
 // GAME
@@ -123,9 +123,18 @@ function drawGame() {
             obstacles[i].position.x = width + random(300, 600);
         }
 
-        // Collision
+        // COLLISION
         if (astronaut.overlap(obstacles[i])) {
             gameState = END;
+
+            // STOP EVERYTHING
+            astronaut.velocity.y = 0;
+            ground1.velocity.x = 0;
+            ground2.velocity.x = 0;
+
+            for (let j = 0; j < obstacles.length; j++) {
+                obstacles[j].velocity.x = 0;
+            }
         }
     }
 
