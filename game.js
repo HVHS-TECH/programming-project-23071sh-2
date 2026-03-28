@@ -51,9 +51,14 @@ function setup() {
     for (let i = 0; i < 3; i++) {
         let obs = new Sprite(width + startX[i], height - 120, 50, 50);
         obs.addAnimation("planet" + i, obstacleImages[i]);
-        obs.scale = 0.175 + i * 0.017;
+        obs.scale = 0.19 + i * 0.0189;
         obs.velocity.x = -6;
+
+        obs.passed = false;
+
         obstacles.push(obs);
+
+
     }
 }
 
@@ -110,8 +115,6 @@ function drawGame() {
         astronaut.velocity.y = 0;
     }
 
-    // Update score
-    score += 1; // increases by 1 every frame
     fill("white");
     textSize(30);
     textAlign(LEFT);
@@ -119,9 +122,22 @@ function drawGame() {
 
     // Obstacles
     for (let i = 0; i < obstacles.length; i++) {
+
+        // Reset obstacle
         if (obstacles[i].position.x < -50) {
-            obstacles[i].position.x = width + random(300, 600);
+            obstacles[i].position.x = width + random(400, 700);
+            obstacles[i].passed = false; 
         }
+
+        //SCORE SYSTEM
+        if (
+            !obstacles[i].passed &&
+            obstacles[i].position.x + obstacles[i].width / 2 < astronaut.position.x - astronaut.width / 2
+        ) {
+            score += 1;
+            obstacles[i].passed = true;
+        }
+
 
         // COLLISION
         if (astronaut.overlap(obstacles[i])) {
@@ -209,6 +225,7 @@ function resetGame() {
         obstacles[i].position.x = width + startX[i];
         obstacles[i].position.y = height - 120;
         obstacles[i].velocity.x = -6;
+        obstacles[i].passed = false; // 
     }
 
     // RESET SCORE
