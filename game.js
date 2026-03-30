@@ -13,15 +13,14 @@ const GAME_STATES = {
 };
 
 const GRAVITY = 0.9;
-const JUMP_FORCE = -20;
+const JUMP_FORCE = -26;
 const GAME_SPEED = -6;
 
 const ASTRONAUT_START_X = 120;
 const GROUND_HEIGHT = 50;
 const ASTRONAUT_GROUND_OFFSET = 120;
 
-const OBSTACLE_SPACING = [10, 500, 1000];
-const OBSTACLE_RESET_RANGE = [400, 700];
+const OBSTACLE_GAP = 400; // distance between obstacles
 
 //==================== VARIABLES ====================//
 
@@ -66,18 +65,17 @@ function setup() {
     ground2.immovable = true;
 
     // Create obstacle sprites and store them in an array
-    let obstacleImages = [obstacle1, obstacle2, obstacle3];
-    for (let i = 0; i < 3; i++) {
-        let obs = new Sprite(width + OBSTACLE_SPACING[i], height - ASTRONAUT_GROUND_OFFSET, 50, 50);
-        obs.addAnimation("planet" + i, obstacleImages[i]);
-        obs.scale = 0.19 + i * 0.0189;
-        obs.velocity.x = -6;
+   let obstacleImages = [obstacle1, obstacle2, obstacle3];
 
-        // Tracks whether the player has already scored from this obstacle
-        obs.passed = false;
+for (let i = 0; i < 3; i++) {
+    let obs = new Sprite(width + i * OBSTACLE_GAP, height - ASTRONAUT_GROUND_OFFSET, 50, 50);
+    obs.addAnimation("planet" + i, obstacleImages[i]);
+    obs.scale = 0.19 + i * 0.0189;
+    obs.velocity.x = GAME_SPEED; // moves left
 
-        obstacles.push(obs);
-    }
+    obs.passed = false; // for scoring
+    obstacles.push(obs);
+}
 }
 
 //==================== MAIN DRAW LOOP ====================//
@@ -124,51 +122,57 @@ function drawInstructions() {
 
 //==================== GAME ====================//
 function drawGame() {
-
-    // Apply gravity to simulate falling
+    // Apply gravity for jumping
     astronaut.velocity.y += GRAVITY;
 
-    // Prevent astronaut from falling below ground level
+    // Keep astronaut on the ground if falling below
     if (astronaut.position.y > height - ASTRONAUT_GROUND_OFFSET) {
         astronaut.position.y = height - ASTRONAUT_GROUND_OFFSET;
         astronaut.velocity.y = 0;
     }
 
-    // Display current score
+    // Display score
     fill("white");
     textSize(30);
     textAlign(LEFT);
     text("Score: " + score, 20, 40);
 
-    // Loop through each obstacle to update movement and scoring
+    // Loop through obstacles
     for (let i = 0; i < obstacles.length; i++) {
-
         let obstacle = obstacles[i];
 
-        // Reset obstacle when it moves off screen
+        // Reset obstacle if it goes off screen
         if (obstacle.position.x < -50) {
-            obstacle.position.x = width + random(OBSTACLE_RESET_RANGE[0], OBSTACLE_RESET_RANGE[1]);
+            // Find the rightmost obstacle
+            let maxX = 0;
+            for (let j = 0; j < obstacles.length; j++) {
+                if (obstacles[j].position.x > maxX) {
+                    maxX = obstacles[j].position.x;
+                }
+            }
+
+            // Place this obstacle after the last one with equal gap
+            obstacle.position.x = maxX + OBSTACLE_GAP;
             obstacle.passed = false;
         }
 
-        // Increase score only once when player successfully passes obstacle
+        // Increase score when astronaut passes obstacle
         if (!obstacle.passed && obstacle.position.x < astronaut.position.x) {
             score += 1;
             obstacle.passed = true;
         }
 
-        // Detect collision between astronaut and obstacle
+        // Check collision
         if (astronaut.overlap(obstacle)) {
             gameState = GAME_STATES.END;
             stopAllMovement();
         }
     }
 
-    // Infinite scrolling ground logic
+    // Infinite scrolling ground
     if (ground1.position.x <= -width / 2) {
         ground1.position.x = ground2.position.x + width;
     }
-
     if (ground2.position.x <= -width / 2) {
         ground2.position.x = ground1.position.x + width;
     }
