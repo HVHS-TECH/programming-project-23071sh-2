@@ -20,7 +20,7 @@ const ASTRONAUT_START_X = 120;
 const GROUND_HEIGHT = 50;
 const ASTRONAUT_GROUND_OFFSET = 120;
 
-const OBSTACLE_GAP = 400; // distance between obstacles
+const OBSTACLE_GAP = 500; // distance between obstacles
 
 //==================== VARIABLES ====================//
 
@@ -70,7 +70,7 @@ function setup() {
 for (let i = 0; i < 3; i++) {
     let obs = new Sprite(width + i * OBSTACLE_GAP, height - ASTRONAUT_GROUND_OFFSET, 50, 50);
     obs.addAnimation("planet" + i, obstacleImages[i]);
-    obs.scale = 0.19 + i * 0.0189;
+    obs.scale = 0.20 + i * 0.018;
     obs.velocity.x = GAME_SPEED; // moves left
 
     obs.passed = false; // for scoring
@@ -233,12 +233,12 @@ function resetGame() {
     ground2.position.x = width + width / 2;
     ground2.velocity.x = GAME_SPEED;
 
-    for (let i = 0; i < obstacles.length; i++) {
-        obstacles[i].position.x = width + OBSTACLE_SPACING[i];
-        obstacles[i].position.y = height - ASTRONAUT_GROUND_OFFSET;
-        obstacles[i].velocity.x = GAME_SPEED;
-        obstacles[i].passed = false;
-    }
+ for (let i = 0; i < obstacles.length; i++) {
+    obstacles[i].position.x = width + i * OBSTACLE_GAP; // consistent spacing
+    obstacles[i].position.y = height - ASTRONAUT_GROUND_OFFSET;
+    obstacles[i].velocity.x = GAME_SPEED;
+    obstacles[i].passed = false;
+}
 
     score = 0;
 }
