@@ -70,8 +70,7 @@ function setup() {
     obs.scale = 0.20 + i * 0.018;
 
     // Align obstacles with ground
-    obs.position.y = height - ASTRONAUT_GROUND_OFFSET - obs.height / 2;
-
+    obs.position.y = ground1.position.y - 75;
     obs.passed = false;
     obs.velocity.x = GAME_SPEED;
 
@@ -159,12 +158,14 @@ function drawGame() {
       score += 1;
       obstacle.passed = true;
     }
+let dx = abs(astronaut.position.x - obstacle.position.x);
+let dy = abs(astronaut.position.y - obstacle.position.y);
 
-    // Collision detection
-    if (astronaut.overlap(obstacle)) {
-      gameState = GAME_STATES.END;
-      stopAllMovement();
-    }
+// adjust these numbers to match your sprites
+if (dx < 70 && dy < 90) {
+  gameState = GAME_STATES.END;
+  stopAllMovement();
+}
   }
 
   // Infinite scrolling ground
@@ -213,7 +214,7 @@ function resetGame() {
 
   for (let i = 0; i < obstacles.length; i++) {
     obstacles[i].position.x = width + i * OBSTACLE_GAP;
-    obstacles[i].position.y = height - ASTRONAUT_GROUND_OFFSET - obstacles[i].height / 2;
+    obstacles[i].position.y = ground1.position.y - 75;
     obstacles[i].velocity.x = GAME_SPEED;
     obstacles[i].passed = false;
   }
