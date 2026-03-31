@@ -71,6 +71,7 @@ function setup() {
 
     // Align obstacles with ground
     obs.position.y = ground1.position.y - 75;
+    
     obs.passed = false;
     obs.velocity.x = GAME_SPEED;
 
