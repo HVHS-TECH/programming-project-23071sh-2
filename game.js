@@ -69,7 +69,7 @@ function setup() {
   for (let i = 0; i < 3; i++) {
     let obs = new Sprite(width + i * OBSTACLE_GAP, 0, 50, 50);
     obs.addAnimation("planet" + i, obstacleImages[i]);
-    obs.scale = 0.20;
+    obs.scale = 0.23;
 
     // Align obstacles with ground
     obs.position.y = ground1.position.y - 75;
@@ -80,6 +80,7 @@ function setup() {
     obstacles.push(obs);
   }
 }
+
 
 //==================== DRAW LOOP ====================//
 function draw() {
