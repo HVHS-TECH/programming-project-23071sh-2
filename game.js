@@ -124,8 +124,7 @@ function drawInstructions() {
   text("Press SPACE to Jump", width / 2, 250);
   text("Avoid the planets!", width / 2, 280);
   text("Survive as long as possible", width / 2, 310);
-  text("TIP! press space double or triple times to jump higher", width / 2, 340);
-  text("Press B to go back", width / 2, 400);
+  text("Press B to go back", width / 2, 360);
 }
 
 //==================== GAME ====================//
