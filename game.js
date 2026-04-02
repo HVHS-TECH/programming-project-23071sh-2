@@ -12,7 +12,7 @@ const GAME_STATES = {
 };
 
 const GRAVITY = 0.9;        // Pulls the astronaut down
-const JUMP_FORCE = -26;     // Pushes the astronaut up when jumping
+const JUMP_FORCE = -28;     // Pushes the astronaut up when jumping
 const GAME_SPEED = -6;      // How fast the ground and obstacles move left
 
 const ASTRONAUT_START_X = 120;          // Starting X position of astronaut
@@ -152,7 +152,7 @@ function drawGame() {
 
     // Reset obstacle if it goes off screen
     if (obstacle.position.x < -50) {
-      let maxX = 0;
+      let maxX = 0
       for (let j = 0; j < obstacles.length; j++) {
         if (obstacles[j].position.x > maxX) maxX = obstacles[j].position.x;
       }
